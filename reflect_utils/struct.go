@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/mztlive/project-template/pkg/string_utils"
+	"github.com/mztlive/go-pkgs/string_utils"
 )
 
 // GetNameFromStruct 获取结构体的名字

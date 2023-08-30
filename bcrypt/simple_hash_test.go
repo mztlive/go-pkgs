@@ -4,7 +4,7 @@ package bcrypt_test
 import (
 	"testing"
 
-	"github.com/mztlive/project-template/pkg/bcrypt"
+	"github.com/mztlive/go-pkgs/bcrypt"
 )
 
 func TestHashAndCheckHash(t *testing.T) {

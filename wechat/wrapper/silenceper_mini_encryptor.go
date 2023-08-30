@@ -2,7 +2,7 @@ package wrapper
 
 import (
 	"github.com/jinzhu/copier"
-	"github.com/mztlive/project-template/pkg/wechat/mini"
+	"github.com/mztlive/go-pkgs/wechat/mini"
 )
 
 func (m *SilenceperMini) Decrypt(sessionKey, encryptedData, iv string) (*mini.PlainData, error) {

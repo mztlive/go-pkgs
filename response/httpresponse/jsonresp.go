@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mztlive/project-template/pkg/response"
+	"github.com/mztlive/go-pkgs/response"
 )
 
 func UnAuthorized(c *gin.Context, message string) {

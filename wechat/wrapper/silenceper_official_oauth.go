@@ -2,7 +2,7 @@ package wrapper
 
 import (
 	"github.com/jinzhu/copier"
-	"github.com/mztlive/project-template/pkg/wechat/officialaccount"
+	"github.com/mztlive/go-pkgs/wechat/officialaccount"
 )
 
 // 这个文件实现了公众号授权相关的接口

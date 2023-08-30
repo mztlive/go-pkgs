@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/mztlive/project-template/pkg/string_utils"
+	"github.com/mztlive/go-pkgs/string_utils"
 )
 
 // ConvertEntityToInsertNamedStmt 将实体转换为插入语句(Named方式)

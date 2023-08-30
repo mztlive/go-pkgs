@@ -3,7 +3,7 @@ package wrapper
 import (
 	"context"
 
-	"github.com/mztlive/project-template/pkg/wechat/mini"
+	"github.com/mztlive/go-pkgs/wechat/mini"
 	"github.com/silenceper/wechat/v2/miniprogram"
 	"github.com/silenceper/wechat/v2/miniprogram/subscribe"
 	"github.com/spf13/cast"

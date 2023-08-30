@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mztlive/project-template/pkg/reflect_utils"
+	"github.com/mztlive/go-pkgs/reflect_utils"
 	"github.com/samber/lo"
 )
 

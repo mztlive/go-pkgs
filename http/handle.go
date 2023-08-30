@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mztlive/project-template/pkg/response/httpresponse"
+	"github.com/mztlive/go-pkgs/response/httpresponse"
 )
 
 type ServiceAnyHandlerWithArg[R, S any] func(ctx context.Context, req R) (S, error)

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mztlive/project-template/pkg/database"
+	"github.com/mztlive/go-pkgs/database"
 )
 
 // Run 开启一个事务并且自动提交或者回滚

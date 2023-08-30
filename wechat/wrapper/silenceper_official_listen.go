@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/copier"
-	"github.com/mztlive/project-template/pkg/logger"
-	"github.com/mztlive/project-template/pkg/wechat/officialaccount"
+	"github.com/mztlive/go-pkgs/logger"
+	"github.com/mztlive/go-pkgs/wechat/officialaccount"
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 	"go.uber.org/zap"
 )

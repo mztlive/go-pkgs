@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/copier"
-	"github.com/mztlive/project-template/pkg/wechat/officialaccount"
+	"github.com/mztlive/go-pkgs/wechat/officialaccount"
 	silenceper_official "github.com/silenceper/wechat/v2/officialaccount"
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 )

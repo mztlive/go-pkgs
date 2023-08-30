@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/jinzhu/copier"
-	"github.com/mztlive/project-template/pkg/wechat/mini"
+	"github.com/mztlive/go-pkgs/wechat/mini"
 )
 
 func (m *SilenceperMini) Code2Session(ctx context.Context, jsCode string) (result *mini.ResCode2Session, err error) {

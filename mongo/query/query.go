@@ -3,7 +3,7 @@ package query
 import (
 	"context"
 
-	"github.com/mztlive/project-template/pkg/structure"
+	"github.com/mztlive/go-pkgs/structure"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

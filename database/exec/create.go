@@ -3,8 +3,8 @@ package exec
 import (
 	"context"
 
-	"github.com/mztlive/project-template/pkg/database"
-	"github.com/mztlive/project-template/pkg/database/convert"
+	"github.com/mztlive/go-pkgs/database"
+	"github.com/mztlive/go-pkgs/database/convert"
 	"github.com/spf13/cast"
 )
 
