@@ -2,6 +2,7 @@ package exec
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/mztlive/go-pkgs/reflect_utils"
@@ -16,12 +17,15 @@ func (a *UpdateExecutor) UpdateDocument(ctx context.Context, entity EntityInterf
 	collectionName := reflect_utils.GetSnakeNameFromStruct(entity)
 	filter := bson.M{
 		"identity": entity.GetIdentity(),
+		"version":  entity.GetVersion(),
 	}
-
-	_, err := db.Collection(collectionName).UpdateOne(ctx, filter, bson.M{
+	entity.AddVersion()
+	upRes, err := db.Collection(collectionName).UpdateOne(ctx, filter, bson.M{
 		"$set": entity,
 	})
-
+	if upRes.ModifiedCount == 0 {
+		return errors.New("update failed. maybe the document is not exist or the version is not match")
+	}
 	return err
 }
 

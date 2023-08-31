@@ -10,6 +10,11 @@ import (
 
 type FindExecutor struct{}
 
+// NewFindExecutor returns a new FindExecutor
+func NewFindExecutor() *FindExecutor {
+	return &FindExecutor{}
+}
+
 // GetByIdentity 查找一个实体
 //
 // collection_name 是实体的名称, entity是实体的指针
