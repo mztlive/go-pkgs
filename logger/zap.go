@@ -98,3 +98,14 @@ func Debug(msg string, fields ...zap.Field) {
 
 	logger.Debug(msg, fields...)
 }
+
+func DatabaseError(err error, fields ...zap.Field) {
+	if logger == nil {
+		panic("logger not init.")
+	}
+
+	// fields的头部添加一个error字段
+	fields = append([]zap.Field{zap.Error(err)}, fields...)
+
+	logger.Error("Error encountered during database operation", fields...)
+}
