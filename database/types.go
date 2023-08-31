@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -28,4 +29,11 @@ type DB interface {
 
 	// Rebind 重新绑定查询参数
 	Rebind(query string) string
+}
+
+type BaseEntity struct {
+	Id        int64      `db:"id"`
+	DeletedAt *time.Time `db:"deleted_at"`
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt time.Time  `db:"updated_at"`
 }
