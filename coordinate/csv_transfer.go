@@ -15,8 +15,8 @@ import (
 type City struct {
 	SN   string
 	Name string
-	Lat  float64
 	Lon  float64
+	Lat  float64
 }
 
 var (
