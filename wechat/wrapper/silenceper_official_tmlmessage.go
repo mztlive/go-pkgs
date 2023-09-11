@@ -6,23 +6,8 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/mztlive/go-pkgs/wechat/officialaccount"
-	silenceper_official "github.com/silenceper/wechat/v2/officialaccount"
 	"github.com/silenceper/wechat/v2/officialaccount/message"
 )
-
-// SilenceperOfficialAccount 公众号订阅消息管理器
-// 实现了IMiniSubscribeMessageManager接口
-type SilenceperOfficialAccount struct {
-	engine *silenceper_official.OfficialAccount
-
-	messageHandler officialaccount.MessageHandlerFunc
-}
-
-func NewSilenceperOfficialAccountWrap(engine *silenceper_official.OfficialAccount) *SilenceperOfficialAccount {
-	return &SilenceperOfficialAccount{
-		engine: engine,
-	}
-}
 
 // Send 发送模板消息
 func (m *SilenceperOfficialAccount) Send(ctx context.Context, msg officialaccount.TemplateMessage) (int64, error) {
