@@ -8,6 +8,12 @@ import (
 	"github.com/spf13/cast"
 )
 
+type EntityInterface interface {
+	GetIdentity() string
+	GetVersion() int64
+	AddVersion()
+}
+
 type BaseEntity struct {
 	Identity  string `bson:"identity" json:"identity"`
 	CreatedAt int64  `bson:"created_at" json:"created_at"`

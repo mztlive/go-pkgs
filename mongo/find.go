@@ -1,4 +1,4 @@
-package exec
+package mongo
 
 import (
 	"context"
@@ -8,17 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type FindExecutor struct{}
-
-// NewFindExecutor returns a new FindExecutor
-func NewFindExecutor() *FindExecutor {
-	return &FindExecutor{}
-}
-
 // GetByIdentity 查找一个实体
 //
 // collection_name 是实体的名称, entity是实体的指针
-func (a *FindExecutor) GetByIdentity(ctx context.Context, identity string, entity any, db *mongo.Database) error {
+func GetByIdentity(ctx context.Context, identity string, entity any, db *mongo.Database) error {
 	collectionName := reflect_utils.GetSnakeNameFromStruct(entity)
 	return db.Collection(collectionName).FindOne(ctx, bson.M{
 		"identity": identity,
@@ -29,7 +22,7 @@ func (a *FindExecutor) GetByIdentity(ctx context.Context, identity string, entit
 // Get 查找一个实体
 //
 // collection_name 是实体的名称, entity是实体的指针
-func (a *FindExecutor) Get(ctx context.Context, filters bson.M, entity any, db *mongo.Database) error {
+func Get(ctx context.Context, filters bson.M, entity any, db *mongo.Database) error {
 	collectionName := reflect_utils.GetSnakeNameFromStruct(entity)
 	return db.Collection(collectionName).FindOne(ctx, filters).Decode(entity)
 }
