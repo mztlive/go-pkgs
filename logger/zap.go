@@ -59,9 +59,9 @@ func createZapLogger(logOutputFile string, logDevelopment bool) *zap.Logger {
 
 	if logDevelopment {
 		development := zap.Development()
-		zapLogger = zap.New(core, development, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
+		zapLogger = zap.New(core, development, zap.AddCaller())
 	} else {
-		zapLogger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zap.ErrorLevel))
+		zapLogger = zap.New(core, zap.AddCaller())
 	}
 
 	return zapLogger
