@@ -5,10 +5,10 @@ package structure
 // Paginator 分页参数
 type Paginator struct {
 	//页码
-	Page int64
+	Page int64 `json:"page"`
 
 	//每页数量
-	PageSize int64
+	PageSize int64 `json:"page_size"`
 }
 
 // Offset 返回数据未知偏移
