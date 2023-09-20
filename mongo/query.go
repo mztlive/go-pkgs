@@ -61,30 +61,56 @@ func QueryCollection[T any](ctx context.Context, params QueryParams, dest *struc
 		},
 	}
 
-	cursor, err := db.Collection(params.CollectionName).Aggregate(ctx, pipeline)
+	items, total, err := QueryItemsAndTotalFromPipeline[T](ctx, pipeline, params.CollectionName, db)
 	if err != nil {
 		return err
 	}
 
-	response := []bson.M{}
-	if err = cursor.All(context.TODO(), &response); err != nil {
-		return err
+	for _, item := range items {
+		dest.Items = append(dest.Items, *item)
 	}
 
-	list := response[0]["list"].(bson.A)
-	count := response[0]["count"].(bson.A)
+	dest.Total = total
+	return err
+}
 
-	if len(list) == 0 {
-		return nil
+// QueryItemsAndTotalFromPipeline takes a mongo.Pipeline and a collection name
+// and returns a slice of items and a total count of items
+//
+// Warning:
+// The pipeline must have a $facet stage with a "list" and "count" stage
+//
+// Panics:
+// If the pipeline does not have a $facet stage with a "list" and "count" stage
+func QueryItemsAndTotalFromPipeline[T any](ctx context.Context, pipeline mongo.Pipeline, cName string, db *mongo.Database) (items []*T, total int64, err error) {
+	var (
+		response []bson.M
+		cursor   *mongo.Cursor
+		list     bson.A
+		count    bson.A
+	)
+
+	if cursor, err = db.Collection(cName).Aggregate(ctx, pipeline); err != nil {
+		return
 	}
+
+	if err = cursor.All(ctx, &response); err != nil {
+		return
+	}
+
+	list = response[0]["list"].(bson.A)
+	count = response[0]["count"].(bson.A)
 
 	for _, item := range list {
 		ptr := new(T)
 		bsonData, _ := bson.Marshal(item)
-		bson.Unmarshal(bsonData, ptr)
-		dest.Items = append(dest.Items, *ptr)
+		if err := bson.Unmarshal(bsonData, ptr); err != nil {
+			return nil, 0, err
+		}
+
+		items = append(items, ptr)
 	}
 
-	dest.Total = cast.ToInt64(count[0].(bson.M)["count"])
-	return nil
+	total = cast.ToInt64(count[0].(bson.M)["count"])
+	return
 }
