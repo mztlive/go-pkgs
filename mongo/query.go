@@ -101,16 +101,19 @@ func QueryItemsAndTotalFromPipeline[T any](ctx context.Context, pipeline mongo.P
 	list = response[0]["list"].(bson.A)
 	count = response[0]["count"].(bson.A)
 
-	for _, item := range list {
-		ptr := new(T)
-		bsonData, _ := bson.Marshal(item)
-		if err := bson.Unmarshal(bsonData, ptr); err != nil {
-			return nil, 0, err
+	if len(list) > 0 {
+		for _, item := range list {
+			ptr := new(T)
+			bsonData, _ := bson.Marshal(item)
+			if err := bson.Unmarshal(bsonData, ptr); err != nil {
+				return nil, 0, err
+			}
+
+			items = append(items, ptr)
 		}
 
-		items = append(items, ptr)
+		total = cast.ToInt64(count[0].(bson.M)["count"])
 	}
 
-	total = cast.ToInt64(count[0].(bson.M)["count"])
 	return
 }
