@@ -30,25 +30,16 @@ func StartTransaction(ctx context.Context, db *mongo.Database, handler Transacti
 		err     error
 	)
 
-	transactionOptions := options.Transaction().SetReadConcern(readconcern.Majority()).SetWriteConcern(writeconcern.Majority())
+	txo := options.Transaction().SetReadConcern(readconcern.Majority()).SetWriteConcern(writeconcern.Majority())
 
 	if session, err = db.Client().StartSession(); err != nil {
 		return nil, fmt.Errorf("start session error: %w", err)
 	}
+	defer session.EndSession(ctx)
 
-	if err = session.StartTransaction(transactionOptions); err != nil {
-		return nil, fmt.Errorf("start transaction error: %w", err)
-	}
-
-	result, err = session.WithTransaction(ctx, func(ctx mongo.SessionContext) (interface{}, error) {
-		return handler(ctx, session)
-	})
-
-	if err != nil {
-		err = session.CommitTransaction(ctx)
-	} else {
-		err = session.AbortTransaction(ctx)
-	}
+	result, err = session.WithTransaction(ctx, func(sCtx mongo.SessionContext) (interface{}, error) {
+		return handler(sCtx, session)
+	}, txo)
 
 	return result, err
 }
