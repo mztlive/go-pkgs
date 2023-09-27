@@ -9,6 +9,7 @@ import (
 )
 
 type EntityInterface interface {
+	SetBaseEntity(baseEntity BaseEntity)
 	GetIdentity() string
 	GetVersion() int64
 	AddVersion()
@@ -31,14 +32,25 @@ type BaseEntity struct {
 func (a *BaseEntity) FromAny(any interface{}) error {
 	return copier.Copy(a, any)
 }
+
 func (a *BaseEntity) GetIdentity() string {
 	return a.Identity
 }
+
 func (a *BaseEntity) GetVersion() int64 {
 	return a.Version
 }
+
 func (a *BaseEntity) AddVersion() {
 	a.Version++
+}
+
+func (a *BaseEntity) SetBaseEntity(baseEntity BaseEntity) {
+	a.Identity = baseEntity.Identity
+	a.CreatedAt = baseEntity.CreatedAt
+	a.DeletedAt = baseEntity.DeletedAt
+	a.UpdatedAt = baseEntity.UpdatedAt
+	a.Version = baseEntity.Version
 }
 
 // NewBaseEntity 返回一个 BaseEntity 实例
