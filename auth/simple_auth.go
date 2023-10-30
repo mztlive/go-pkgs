@@ -7,16 +7,6 @@ import (
 	jwt "github.com/golang-jwt/jwt/v4"
 )
 
-// SimpleAuthClaim
-// 一个简单的实现了jwt.Claims接口的结构体， 只包含了用户ID
-type SimpleAuthClaim struct {
-	UserID string `json:"userId"`
-	jwt.StandardClaims
-}
-
-// TokenExpireDuration token过期时间
-const TokenExpireDuration = 120 * time.Hour
-
 // EncodeJwtToken 生成token
 func EncodeJwtToken(userID string, secret []byte) (string, error) {
 	c := SimpleAuthClaim{
