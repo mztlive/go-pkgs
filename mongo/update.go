@@ -3,12 +3,22 @@ package mongo
 import (
 	"context"
 	"errors"
+	"math/rand"
 	"time"
 
 	"github.com/mztlive/go-pkgs/reflect_utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var (
+	ErrCasLock = errors.New("cas lock")
+)
+
+func retryWait(i int) {
+	waitSec := (i + 1) * rand.Intn(500)
+	time.Sleep(time.Millisecond * time.Duration(waitSec))
+}
 
 func UpdateDocument(ctx context.Context, entity EntityInterface, db *mongo.Database) error {
 
@@ -17,14 +27,37 @@ func UpdateDocument(ctx context.Context, entity EntityInterface, db *mongo.Datab
 		"identity": entity.GetIdentity(),
 		"version":  entity.GetVersion(),
 	}
+
 	entity.AddVersion()
 	upRes, err := db.Collection(collectionName).UpdateOne(ctx, filter, bson.M{
 		"$set": entity,
 	})
+
 	if upRes.ModifiedCount == 0 {
-		return errors.New("update failed. maybe the document is not exist or the version is not match")
+		return ErrCasLock
 	}
+
 	return err
+}
+
+// UpdateDocumentWithCasRetry 乐观锁更新
+// 重试次数为3次
+func UpdateDocumentWithCasRetry(ctx context.Context, entity EntityInterface, db *mongo.Database) error {
+	for i := 0; i < 3; i++ {
+		err := UpdateDocument(ctx, entity, db)
+
+		if err == nil {
+			return nil
+		}
+
+		if err != ErrCasLock {
+			return err
+		}
+
+		retryWait(i)
+	}
+
+	return ErrCasLock
 }
 
 // SoftDelete 软删除 (将deleted_at字段设置为当前时间)
