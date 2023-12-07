@@ -18,7 +18,14 @@ func Insert(ctx context.Context, entity any, db *mongo.Database) (*mongo.InsertO
 // InsertMany 插入多个实体
 //
 // collection_name 是实体的名称
-func InsertMany(ctx context.Context, entities []any, db *mongo.Database) (*mongo.InsertManyResult, error) {
+func InsertMany[T any](ctx context.Context, entities []T, db *mongo.Database) (*mongo.InsertManyResult, error) {
 	collectionName := reflect_utils.GetSnakeNameFromStruct(entities[0])
-	return db.Collection(collectionName).InsertMany(ctx, entities)
+
+	// []T 转换为 []interface{}
+	var interfaceSlice []interface{} = make([]interface{}, len(entities))
+	for i, d := range entities {
+		interfaceSlice[i] = d
+	}
+
+	return db.Collection(collectionName).InsertMany(ctx, interfaceSlice)
 }
