@@ -13,6 +13,7 @@ type EntityInterface interface {
 	GetIdentity() string
 	GetVersion() int64
 	AddVersion()
+	UpdateNow()
 }
 
 type BaseEntity struct {
@@ -43,6 +44,10 @@ func (a *BaseEntity) GetVersion() int64 {
 
 func (a *BaseEntity) AddVersion() {
 	a.Version++
+}
+
+func (a *BaseEntity) UpdateNow() {
+	a.UpdatedAt = time.Now().Unix()
 }
 
 func (a *BaseEntity) SetBaseEntity(baseEntity BaseEntity) {

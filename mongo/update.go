@@ -29,6 +29,7 @@ func UpdateDocument(ctx context.Context, entity EntityInterface, db *mongo.Datab
 	}
 
 	entity.AddVersion()
+	entity.UpdateNow()
 	upRes, err := db.Collection(collectionName).UpdateOne(ctx, filter, bson.M{
 		"$set": entity,
 	})
