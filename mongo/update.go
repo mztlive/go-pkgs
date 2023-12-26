@@ -20,6 +20,27 @@ func retryWait(i int) {
 	time.Sleep(time.Millisecond * time.Duration(waitSec))
 }
 
+// UpdateDocumentWithNotTimestamp 更新文档，不更新时间戳
+func UpdateDocumentWithNotTimestamp(ctx context.Context, entity EntityInterface, db *mongo.Database) error {
+
+	collectionName := reflect_utils.GetSnakeNameFromStruct(entity)
+	filter := bson.M{
+		"identity": entity.GetIdentity(),
+		"version":  entity.GetVersion(),
+	}
+
+	entity.AddVersion()
+	upRes, err := db.Collection(collectionName).UpdateOne(ctx, filter, bson.M{
+		"$set": entity,
+	})
+
+	if upRes.ModifiedCount == 0 {
+		return ErrCasLock
+	}
+
+	return err
+}
+
 func UpdateDocument(ctx context.Context, entity EntityInterface, db *mongo.Database) error {
 
 	collectionName := reflect_utils.GetSnakeNameFromStruct(entity)
