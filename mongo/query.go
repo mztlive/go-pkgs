@@ -12,7 +12,7 @@ import (
 
 type QueryParams struct {
 	Filter         bson.M
-	Paginator      structure.Paginator
+	Paginator      *structure.Paginator
 	CollectionName string
 }
 
@@ -21,16 +21,19 @@ type QueryParams struct {
 //
 // 查询结果会根据paginator进行分页并且使用created_at进行降序
 func QuerySlice[T any](ctx context.Context, params QueryParams, dests *[]T, db *mongo.Database) error {
-	offset := params.Paginator.Offset()
-	limit := params.Paginator.Limit()
-
 	option := &options.FindOptions{
 		Sort: bson.M{"created_at": -1},
 	}
 
-	if offset != 0 && limit != 0 {
-		option = option.SetSkip(offset)
-		option = option.SetLimit(limit)
+	if params.Paginator != nil {
+		offset := params.Paginator.Offset()
+		limit := params.Paginator.Limit()
+
+		if offset != 0 && limit != 0 {
+			option = option.SetSkip(offset)
+			option = option.SetLimit(limit)
+		}
+
 	}
 
 	cursor, err := db.Collection(params.CollectionName).Find(ctx, params.Filter, option)
@@ -44,19 +47,27 @@ func QuerySlice[T any](ctx context.Context, params QueryParams, dests *[]T, db *
 
 func QueryCollection[T any](ctx context.Context, params QueryParams, dest *structure.Collection[T], db *mongo.Database) error {
 
-	offset := params.Paginator.Offset()
-	limit := params.Paginator.Limit()
 	matchStage := bson.M{"$match": params.Filter}
 	sortStage := bson.M{"$sort": bson.M{"created_at": -1}}
-	skipStage := bson.M{"$skip": offset}
-	limitStage := bson.M{"$limit": limit}
 	countStage := bson.M{"$count": "count"}
+
+	listFacetItem := bson.A{matchStage, sortStage}
+	countFacetItem := bson.A{matchStage, countStage}
+
+	if params.Paginator != nil {
+		offset := params.Paginator.Offset()
+		limit := params.Paginator.Limit()
+		skipStage := bson.M{"$skip": offset}
+		limitStage := bson.M{"$limit": limit}
+
+		listFacetItem = append(listFacetItem, skipStage, limitStage)
+	}
 
 	pipeline := mongo.Pipeline{
 		bson.D{
 			{Key: "$facet", Value: bson.M{
-				"list":  bson.A{matchStage, sortStage, skipStage, limitStage},
-				"count": bson.A{matchStage, countStage},
+				"list":  listFacetItem,
+				"count": countFacetItem,
 			}},
 		},
 	}
