@@ -16,6 +16,10 @@ type QueryParams struct {
 	CollectionName string
 }
 
+func CountDocument(ctx context.Context, params QueryParams, db *mongo.Database) (int64, error) {
+	return db.Collection(params.CollectionName).CountDocuments(ctx, params.Filter)
+}
+
 // QuerySlice 根据filter查询数据
 // dests是一个slice，用于接收查询结果
 //
