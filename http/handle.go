@@ -44,7 +44,13 @@ func PostHandle[R, S any](handler ServiceAnyHandlerWithArg[R, S]) gin.HandlerFun
 // AnyHandle is a gin handler wrapper for service handler
 func AnyHandle[S any](handler ServiceAnyHandler[S]) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		res, err := handler(ctx)
+		// 获取一个tracer
+		tracer := otel.Tracer(ctx.Request.URL.Path)
+		// 开始一个新的Span
+		newCtx, span := tracer.Start(ctx, "service_handle")
+
+		defer span.End()
+		res, err := handler(newCtx)
 		if err != nil {
 			httpresponse.SystemError(ctx, err.Error())
 			return
@@ -62,7 +68,15 @@ func PostHandleNotResp[R any](handler ServicePostHandlerNotResp[R]) gin.HandlerF
 			httpresponse.BadRequest(ctx, err.Error())
 			return
 		}
-		err := handler(ctx, req)
+
+		// 获取一个tracer
+		tracer := otel.Tracer(ctx.Request.URL.Path)
+		// 开始一个新的Span
+		newCtx, span := tracer.Start(ctx, "service_handle")
+
+		defer span.End()
+
+		err := handler(newCtx, req)
 		if err != nil {
 			httpresponse.SystemError(ctx, err.Error())
 			return
