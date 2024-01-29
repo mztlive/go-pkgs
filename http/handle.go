@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mztlive/go-pkgs/response/httpresponse"
+	"go.opentelemetry.io/otel"
 )
 
 type ServiceAnyHandlerWithArg[R, S any] func(ctx context.Context, req R) (S, error)
@@ -23,7 +24,14 @@ func PostHandle[R, S any](handler ServiceAnyHandlerWithArg[R, S]) gin.HandlerFun
 			httpresponse.BadRequest(ctx, err.Error())
 			return
 		}
-		res, err := handler(ctx, req)
+
+		// 获取一个tracer
+		tracer := otel.Tracer(ctx.Request.URL.Path)
+		// 开始一个新的Span
+		newCtx, span := tracer.Start(ctx, "service_handle")
+		defer span.End()
+
+		res, err := handler(newCtx, req)
 		if err != nil {
 			httpresponse.SystemError(ctx, err.Error())
 			return
