@@ -28,7 +28,7 @@ func PostHandle[R, S any](handler ServiceAnyHandlerWithArg[R, S]) gin.HandlerFun
 		// 获取一个tracer
 		tracer := otel.Tracer(ctx.Request.URL.Path)
 		// 开始一个新的Span
-		newCtx, span := tracer.Start(ctx, "service_handle")
+		newCtx, span := tracer.Start(ctx, ctx.Request.URL.Path)
 		defer span.End()
 
 		res, err := handler(newCtx, req)
@@ -47,7 +47,7 @@ func AnyHandle[S any](handler ServiceAnyHandler[S]) gin.HandlerFunc {
 		// 获取一个tracer
 		tracer := otel.Tracer(ctx.Request.URL.Path)
 		// 开始一个新的Span
-		newCtx, span := tracer.Start(ctx, "service_handle")
+		newCtx, span := tracer.Start(ctx, ctx.Request.URL.Path)
 
 		defer span.End()
 		res, err := handler(newCtx)
@@ -72,7 +72,7 @@ func PostHandleNotResp[R any](handler ServicePostHandlerNotResp[R]) gin.HandlerF
 		// 获取一个tracer
 		tracer := otel.Tracer(ctx.Request.URL.Path)
 		// 开始一个新的Span
-		newCtx, span := tracer.Start(ctx, "service_handle")
+		newCtx, span := tracer.Start(ctx, ctx.Request.URL.Path)
 
 		defer span.End()
 
