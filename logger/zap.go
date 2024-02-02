@@ -47,7 +47,7 @@ func createZapLogger(logOutputFile string, logDevelopment bool) *zap.Logger {
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,  // 小写编码器
 		EncodeTime:     zapcore.ISO8601TimeEncoder,     // ISO8601 UTC 时间格式
 		EncodeDuration: zapcore.SecondsDurationEncoder, //
-		EncodeCaller:   zapcore.FullCallerEncoder,      // 全路径编码器
+		EncodeCaller:   zapcore.ShortCallerEncoder,     // 简写路径编码器
 		EncodeName:     zapcore.FullNameEncoder,
 	}
 
