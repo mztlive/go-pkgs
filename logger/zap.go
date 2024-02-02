@@ -61,7 +61,7 @@ func createZapLogger(logOutputFile string, logDevelopment bool) *zap.Logger {
 		development := zap.Development()
 		zapLogger = zap.New(core, development)
 	} else {
-		zapLogger = zap.New(core)
+		zapLogger = zap.New(core, zap.AddCaller())
 	}
 
 	return zapLogger
