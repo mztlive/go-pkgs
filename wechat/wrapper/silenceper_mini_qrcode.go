@@ -12,6 +12,8 @@ func (m *SilenceperMini) CreateWXAQRCode(coderParams mini.QRCoder) (response []b
 		return nil, err
 	}
 
+	// m.engine.GetAnalysis().GetAnalysisDailyRetain()
+
 	return m.engine.GetQRCode().CreateWXAQRCode(silenceperParam)
 }
 

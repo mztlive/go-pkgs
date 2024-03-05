@@ -23,7 +23,6 @@ func CheckSignature(signature, timestamp, nonce, token string) bool {
 	} else {
 		return false
 	}
-
 }
 
 func implode(arr []string) string {
