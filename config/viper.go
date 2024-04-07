@@ -7,31 +7,32 @@ import (
 	"github.com/spf13/viper"
 )
 
-// 初始化配置的路径
+// 初始化配置， 如果是生产环境则会覆盖配置文件里面的一些内容
 func Initialize(configPath string) {
+	// Set config file name based on environment
+	configName := "local"
 
-	// 根据环境变量设置配置文件名字
-	// 例如：export ENV=dev
-	// 配置文件名字为：dev.toml
-
-	// 读取环境变量
+	// Read environment variable
 	env := os.Getenv("APP_ENV")
-	switch env {
-	case "dev":
-		viper.SetConfigName("dev")
-	case "test":
-		viper.SetConfigName("test")
-	case "prod":
-		viper.SetConfigName("prod")
-	default:
-		viper.SetConfigName("local")
+
+	if env != "" {
+		configName = env
 	}
 
+	// Set up viper
+	viper.SetConfigName(configName)
 	viper.SetConfigType("toml")
 	viper.AddConfigPath(configPath)
 
-	err := viper.ReadInConfig() // 查找并读取配置文件
-	if err != nil {             // 处理读取配置文件的错误
-		log.Fatalf("Fatal error config file: %s \n", err.Error())
+	// Read config file
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Fatal error reading config file: %s \n", err.Error())
+	}
+
+	// Override config values from environment if in prod
+	if env != "local" {
+		viper.Set("mongodb.uri", os.Getenv("MONGODB_URI"))
+		viper.Set("app.host", os.Getenv("APP_HOST"))
+		viper.Set("database.uri", os.Getenv("DATABASE_URI"))
 	}
 }
