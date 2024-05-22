@@ -18,6 +18,7 @@ import (
 	"github.com/wechatpay-apiv3/wechatpay-go/core/downloader"
 	"github.com/wechatpay-apiv3/wechatpay-go/core/notify"
 	"github.com/wechatpay-apiv3/wechatpay-go/core/option"
+	"github.com/wechatpay-apiv3/wechatpay-go/services/partnerpayments/native"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/jsapi"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/refunddomestic"
@@ -53,6 +54,34 @@ type WechatPayCfg struct {
 	V3Key    string
 	KeyFile  string
 	CertFile string
+}
+
+func WechatNativePay(ctx context.Context, request *native.PrepayRequest, cfg *WechatPayCfg) (*native.PrepayResponse, error) {
+	var (
+		client         *core.Client
+		prepayResponse *native.PrepayResponse
+		prepayResult   *core.APIResult
+		err            error
+	)
+
+	if client, err = wechatPayClient(ctx, cfg); err != nil {
+		return nil, fmt.Errorf("create wechat pay client failed. %w", err)
+	}
+
+	svc := native.NativeApiService{Client: client}
+
+	if prepayResponse, prepayResult, err = svc.Prepay(ctx, *request); err != nil {
+		return nil, fmt.Errorf("prepay failed. %w", err)
+	}
+
+	if prepayResult.Response.StatusCode != http.StatusOK {
+		defer prepayResult.Response.Body.Close()
+		bodyBytes, _ := io.ReadAll(prepayResult.Response.Body)
+
+		return nil, fmt.Errorf("prepay failed. status not is 200. %s", string(bodyBytes))
+	}
+
+	return prepayResponse, nil
 }
 
 // WechatJsPay wechat jsapi pay
